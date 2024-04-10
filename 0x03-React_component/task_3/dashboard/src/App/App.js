@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 import Notifications from "../Notifications/Notifications";
 import Header from "../Header/Header";
 import Login from "../Login/Login";
 import Footer from "../Footer/Footer";
 import CourseList from "../CourseList/CourseList";
-import PropTypes from "prop-types";
+import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
+import BodySection from "../BodySection/BodySection";
 import "./App.css";
 import { getLatestNotification } from "../utils/utils";
 
@@ -20,35 +21,28 @@ const listNotifications = [
   { id: 3, type: "urgent", html: getLatestNotification() },
 ];
 
-class App extends Component {
-  static defaultProps = {
-    isLoggedIn: false,
-    logOut: () => {},
-  };
-
-  static propTypes = {
-    isLoggedIn: PropTypes.bool,
-    logOut: PropTypes.func,
-  };
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.logOut = this.logOut.bind(this);
+  }
 
   componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keydown", this.logOut);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keydown", this.logOut);
   }
 
-  handleKeyDown = (event) => {
-    const { logOut } = this.props;
+  logOut(event) {
     if (event.ctrlKey && event.key === "h") {
       alert("Logging you out");
-      logOut();
+      this.props.logOut();
     }
-  };
+  }
 
   render() {
-    const { isLoggedIn } = this.props;
     return (
       <React.Fragment>
         <div className="App">
@@ -56,7 +50,15 @@ class App extends Component {
             <Notifications listNotifications={listNotifications} />
             <Header />
           </div>
-          {isLoggedIn ? <CourseList listCourses={listCourses} /> : <Login />}
+          <BodySectionWithMarginBottom title="Course list">
+            <CourseList listCourses={listCourses} />
+          </BodySectionWithMarginBottom>
+          <BodySectionWithMarginBottom title="Log in to continue">
+            <Login />
+          </BodySectionWithMarginBottom>
+          <BodySection title="News from the School">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod erat vel lorem dictum, nec aliquet libero dignissim. Sed et velit magna. Proin ut pharetra odio. Donec at ipsum ac nulla vehicula ultrices eget et arcu.</p>
+          </BodySection>
           <Footer />
         </div>
       </React.Fragment>
